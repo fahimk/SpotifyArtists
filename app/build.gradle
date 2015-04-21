@@ -1,0 +1,50 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        applicationId "com.fahim.spotifyartists"
+        minSdkVersion 14
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+repositories {
+    maven {url "https://clojars.org/repo/"}
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    //app compat
+    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:recyclerview-v7:22.0.0'
+
+    //development
+    compile 'com.squareup.dagger:dagger:1.2.2'
+    apt 'com.squareup.dagger:dagger-compiler:1.2.2'
+    compile 'frankiesardo:icepick:3.0.2'
+    provided 'frankiesardo:icepick-processor:3.0.2'
+    compile 'com.jakewharton:butterknife:6.1.0'
+
+    //networking
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.squareup.okhttp:okhttp:2.3.0'
+    compile 'io.reactivex:rxjava:1.0.8'
+    compile 'io.reactivex:rxandroid:0.24.0'
+
+    //mosby
+    compile 'com.hannesdorfmann.mosby:core:1.0.0'
+    compile 'com.hannesdorfmann.mosby:mvp:1.0.0'
+    compile 'com.hannesdorfmann.mosby:viewstate:1.0.0'
+}
