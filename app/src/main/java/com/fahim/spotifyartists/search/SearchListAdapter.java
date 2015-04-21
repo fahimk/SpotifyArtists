@@ -1,4 +1,4 @@
-package com.fahim.spotifyartists.adapters;
+package com.fahim.spotifyartists.search;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

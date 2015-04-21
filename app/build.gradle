@@ -42,9 +42,11 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.3.0'
     compile 'io.reactivex:rxjava:1.0.8'
     compile 'io.reactivex:rxandroid:0.24.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 
     //mosby
-    compile 'com.hannesdorfmann.mosby:core:1.0.0'
-    compile 'com.hannesdorfmann.mosby:mvp:1.0.0'
-    compile 'com.hannesdorfmann.mosby:viewstate:1.0.0'
+    compile 'com.hannesdorfmann.mosby:core-dagger1:1.0.0'
+    compile 'com.hannesdorfmann.mosby:mvp-dagger1:1.0.0'
+    compile 'com.hannesdorfmann.mosby:viewstate-dagger1:1.0.0'
+    compile 'com.hannesdorfmann.mosby:rx:1.0.0'
 }

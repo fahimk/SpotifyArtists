@@ -1,9 +1,7 @@
-package com.fahim.spotifyartists.presenters;
+package com.fahim.spotifyartists.search;
 
 import com.fahim.spotifyartists.api.SpotifyService;
 import com.fahim.spotifyartists.api.model.ArtistSearchResponse;
-import com.fahim.spotifyartists.interfaces.SearchListPresenter;
-import com.fahim.spotifyartists.interfaces.SearchListView;
 import com.hannesdorfmann.mosby.mvp.MvpBasePresenter;
 
 import java.util.concurrent.TimeUnit;
@@ -14,34 +12,33 @@ import rx.android.schedulers.AndroidSchedulers;
 /**
  * Created by fahim on 4/20/15.
  */
-public class SimpleSearchListPresenter extends MvpBasePresenter<SearchListView> implements SearchListPresenter {
+public class SearchListPresenter extends MvpBasePresenter<SearchListView>  {
     SpotifyService spotifyService;
 
-    public SimpleSearchListPresenter(SpotifyService spotifyService) {
+    public SearchListPresenter(SpotifyService spotifyService) {
         this.spotifyService = spotifyService;
     }
 
-    @Override
     public void searchForArtists(String query) {
         if (isViewAttached()) {
-            getView().showLoading(false);
+            getView().showLoading();
         }
 
         spotifyService.artistSearch(query)
-                .observeOn(AndroidSchedulers.mainThread())
                 .delay(10, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ArtistSearchResponse>() {
                     @Override
                     public void onCompleted() {
                         if (isViewAttached()) {
-                            getView().showContent();
+                            getView().showSearchList();
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         if (isViewAttached()) {
-                            getView().showContent();
+                            getView().showError(e);
                         }
                     }
 
@@ -49,7 +46,6 @@ public class SimpleSearchListPresenter extends MvpBasePresenter<SearchListView> 
                     public void onNext(ArtistSearchResponse artistSearchResponse) {
                         if (isViewAttached()) {
                             getView().setData(artistSearchResponse.artists.items);
-                            getView().showContent();
                         }
                     }
                 });

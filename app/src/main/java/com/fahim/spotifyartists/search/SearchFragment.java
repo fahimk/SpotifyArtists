@@ -1,4 +1,4 @@
-package com.fahim.spotifyartists.fragments;
+package com.fahim.spotifyartists.search;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,18 +8,15 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.fahim.spotifyartists.R;
 import com.fahim.spotifyartists.SpotifyArtistsApp;
-import com.fahim.spotifyartists.adapters.SearchListAdapter;
 import com.fahim.spotifyartists.api.SpotifyService;
 import com.fahim.spotifyartists.api.model.Artist;
-import com.fahim.spotifyartists.interfaces.SearchListView;
-import com.fahim.spotifyartists.presenters.SimpleSearchListPresenter;
-import com.hannesdorfmann.mosby.mvp.viewstate.MvpViewStateFragment;
-import com.hannesdorfmann.mosby.mvp.viewstate.ViewState;
-import com.hannesdorfmann.mosby.mvp.viewstate.lce.data.RetainingFragmentLceViewState;
+import com.hannesdorfmann.mosby.dagger1.viewstate.Dagger1MvpViewStateFragment;
+import com.hannesdorfmann.mosby.mvp.viewstate.RestoreableViewState;
 
 import java.util.List;
 
@@ -30,11 +27,12 @@ import butterknife.InjectView;
 /**
  * Created by fahim on 4/20/15.
  */
-public class SearchFragment extends MvpViewStateFragment<SimpleSearchListPresenter> implements SearchListView {
+public class SearchFragment extends Dagger1MvpViewStateFragment<SearchListPresenter> implements SearchListView {
     public static final int VIEWFLIPPER_RESULTS = 0;
     public static final int VIEWFLIPPER_LOADING = 1;
 
     @Inject SpotifyService spotifyService;
+    @Inject SpotifyArtistsApp app;
 
     @InjectView(R.id.search_box) EditText searchBox;
     @InjectView(R.id.recycler_view) RecyclerView recyclerView;
@@ -70,25 +68,28 @@ public class SearchFragment extends MvpViewStateFragment<SimpleSearchListPresent
         });
     }
 
-    @Override
-    protected SimpleSearchListPresenter createPresenter() {
-        return new SimpleSearchListPresenter(spotifyService);
+    @Override protected void injectDependencies() {
+        getObjectGraph().inject(this);
     }
 
     @Override
-    public void showLoading(boolean b) {
-        viewFlipper.setDisplayedChild(VIEWFLIPPER_LOADING);
+    protected SearchListPresenter createPresenter() {
+        return new SearchListPresenter(spotifyService);
     }
 
     @Override
-    public void showContent() {
-        viewFlipper.setDisplayedChild(VIEWFLIPPER_RESULTS);
+    protected int getLayoutRes() {
+        return R.layout.fragment_search;
     }
 
     @Override
-    public void showError(Throwable throwable,
-            boolean b) {
-        viewFlipper.setDisplayedChild(VIEWFLIPPER_RESULTS);
+    public RestoreableViewState createViewState() {
+        return new SearchListViewState();
+    }
+
+    @Override
+    public void onNewViewStateInstance() {
+        showSearchList();
     }
 
     @Override
@@ -98,30 +99,26 @@ public class SearchFragment extends MvpViewStateFragment<SimpleSearchListPresent
     }
 
     @Override
-    public void loadData(boolean b) {
-
+    public SearchListViewState getViewState() {
+        return (SearchListViewState) super.getViewState();
     }
 
     @Override
-    protected void injectDependencies() {
-        super.injectDependencies();
-        SpotifyArtistsApp app = (SpotifyArtistsApp) getActivity().getApplication();
-        app.getObjectGraph().inject(this);
+    public void showSearchList() {
+        getViewState().setStateShowSearchList();
+        viewFlipper.setDisplayedChild(VIEWFLIPPER_RESULTS);
     }
 
     @Override
-    protected int getLayoutRes() {
-        return R.layout.fragment_search;
+    public void showLoading() {
+        getViewState().setStateShowLoading();
+        viewFlipper.setDisplayedChild(VIEWFLIPPER_LOADING);
     }
 
     @Override
-    public ViewState createViewState() {
-        return new RetainingFragmentLceViewState<List<Artist>, SearchListView>(this);
+    public void showError(Throwable e) {
+        viewFlipper.setDisplayedChild(VIEWFLIPPER_RESULTS);
+        Toast.makeText(app, "error: " + e.getMessage().toString(), Toast.LENGTH_LONG).show();
     }
 
-
-    @Override
-    public void onNewViewStateInstance() {
-        showContent();
-    }
 }

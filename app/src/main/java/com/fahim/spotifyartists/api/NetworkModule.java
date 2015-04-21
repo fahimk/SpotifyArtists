@@ -1,11 +1,13 @@
 package com.fahim.spotifyartists.api;
 
-import com.fahim.spotifyartists.fragments.SearchFragment;
+import com.fahim.spotifyartists.SpotifyArtistsApp;
+import com.fahim.spotifyartists.search.SearchFragment;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.picasso.OkHttpDownloader;
+import com.squareup.picasso.Picasso;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -28,7 +30,8 @@ import retrofit.converter.GsonConverter;
         library = true
 )
 
-public class ApiModule {
+public class NetworkModule {
+
     public static final String PRODUCTION_API_URL = "https://api.spotify.com/v1";
 
     @Provides
@@ -39,8 +42,7 @@ public class ApiModule {
 
     @Provides
     @Singleton
-    @Named("Api")
-    OkHttpClient provideApiClient() {
+    OkHttpClient provideOkHttpClient() {
         return new OkHttpClient();
     }
 
@@ -53,8 +55,17 @@ public class ApiModule {
 
     @Provides
     @Singleton
+    Picasso providesPicasso(SpotifyArtistsApp app,
+            OkHttpClient client) {
+        return new Picasso.Builder(app)
+                .downloader(new OkHttpDownloader(client))
+                .build();
+    }
+
+    @Provides
+    @Singleton
     RestAdapter provideRestAdapter(Endpoint endpoint,
-            @Named("Api") OkHttpClient client,
+            OkHttpClient client,
             Gson gson) {
         return new RestAdapter.Builder()
                 .setClient(new OkClient(client))
