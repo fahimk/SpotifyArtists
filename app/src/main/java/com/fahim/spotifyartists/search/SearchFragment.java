@@ -43,7 +43,6 @@ public class SearchFragment extends Dagger1MvpViewStateFragment<SearchListPresen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
     }
 
     @Override
