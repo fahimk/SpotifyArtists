@@ -1,11 +1,13 @@
 package com.fahim.spotifyartists.search;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +19,7 @@ import com.fahim.spotifyartists.api.SpotifyService;
 import com.fahim.spotifyartists.api.model.Artist;
 import com.hannesdorfmann.mosby.dagger1.viewstate.Dagger1MvpViewStateFragment;
 import com.hannesdorfmann.mosby.mvp.viewstate.RestoreableViewState;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -33,6 +36,7 @@ public class SearchFragment extends Dagger1MvpViewStateFragment<SearchListPresen
 
     @Inject SpotifyService spotifyService;
     @Inject SpotifyArtistsApp app;
+    @Inject Picasso picasso;
 
     @InjectView(R.id.search_box) EditText searchBox;
     @InjectView(R.id.recycler_view) RecyclerView recyclerView;
@@ -43,6 +47,7 @@ public class SearchFragment extends Dagger1MvpViewStateFragment<SearchListPresen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -50,7 +55,7 @@ public class SearchFragment extends Dagger1MvpViewStateFragment<SearchListPresen
             Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        searchListAdapter = searchListAdapter == null ? new SearchListAdapter() : searchListAdapter;
+        searchListAdapter = searchListAdapter == null ? new SearchListAdapter(picasso) : searchListAdapter;
         recyclerView.setAdapter(searchListAdapter);
 
         searchBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -111,6 +116,10 @@ public class SearchFragment extends Dagger1MvpViewStateFragment<SearchListPresen
     @Override
     public void showLoading() {
         getViewState().setStateShowLoading();
+        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(searchBox.getWindowToken(), 0);
+
         viewFlipper.setDisplayedChild(VIEWFLIPPER_LOADING);
     }
 

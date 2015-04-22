@@ -8,6 +8,11 @@ import java.util.ArrayList;
  */
 public class Artist {
     public String name;
-    public int popularity;
+    public Followers followers;
     public ArrayList<com.fahim.spotifyartists.api.model.Image> images;
+
+    public class Followers {
+        public String href;
+        public int total;
+    }
 }

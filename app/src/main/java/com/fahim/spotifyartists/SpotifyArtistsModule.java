@@ -3,7 +3,6 @@ package com.fahim.spotifyartists;
 import com.fahim.spotifyartists.api.NetworkModule;
 import com.fahim.spotifyartists.search.SearchActivity;
 import com.fahim.spotifyartists.search.SearchFragment;
-import com.fahim.spotifyartists.search.SearchListPresenter;
 
 import javax.inject.Singleton;
 
@@ -20,7 +19,6 @@ import dagger.Provides;
         },
         injects = {
                 SearchActivity.class,
-                SearchListPresenter.class,
                 SearchFragment.class,
                 SpotifyArtistsApp.class
         }

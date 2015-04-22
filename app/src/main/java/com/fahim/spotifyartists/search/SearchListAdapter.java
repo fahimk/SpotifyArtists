@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.fahim.spotifyartists.R;
 import com.fahim.spotifyartists.api.model.Artist;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -19,7 +20,12 @@ import butterknife.InjectView;
  * Created by fahim on 4/20/15.
  */
 public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.ViewHolder> {
+    Picasso picasso;
     private List<Artist> artists;
+
+    public SearchListAdapter(Picasso picasso) {
+        this.picasso = picasso;
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent,
@@ -32,7 +38,14 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder,
             int position) {
-        holder.bindModel(artists.get(position));
+        Artist artist = artists.get(position);
+
+        if (artist.images.size() > 0) {
+            String imageUrl = artist.images.get(0).url;
+            SearchListAdapter.this.picasso.load(imageUrl).into(holder.image);
+        }
+        holder.name.setText(artist.name);
+        holder.followers.setText(artist.followers.total + " followers");
     }
 
     @Override
@@ -51,15 +64,11 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
     public static class ViewHolder extends RecyclerView.ViewHolder {
         @InjectView(R.id.image) ImageView image;
         @InjectView(R.id.name) TextView name;
+        @InjectView(R.id.followers) TextView followers;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.inject(this, itemView);
         }
-
-        public void bindModel(Artist artist) {
-            name.setText(artist.name);
-        }
-
     }
 }

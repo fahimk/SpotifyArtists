@@ -25,7 +25,7 @@ public class SearchListPresenter extends MvpBasePresenter<SearchListView>  {
         }
 
         spotifyService.artistSearch(query)
-                .delay(10, TimeUnit.SECONDS)
+                .delay(5, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ArtistSearchResponse>() {
                     @Override
